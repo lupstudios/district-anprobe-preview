@@ -1,0 +1,290 @@
+/* Tattoo-Anprobe · District-Look: Schwarz und Grau tragen, Rot ist nur Akzent. */
+:root {
+  --schwarz: #000000;
+  --rot: #990000;
+  --grau: #545454;
+  --weiss: #ffffff;
+  --text-2: rgba(255, 255, 255, .72);
+  --flaeche: #0e0e0e;
+  --titel: "Anton", "Impact", "Arial Narrow", sans-serif;
+  --schrift: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --weich: cubic-bezier(.2, .7, .2, 1);
+  color-scheme: dark;
+}
+
+@property --teilung { syntax: "<percentage>"; inherits: true; initial-value: 50%; }
+
+*, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--schwarz);
+  color: var(--weiss);
+  font: 400 16px/1.5 var(--schrift);
+  -webkit-font-smoothing: antialiased;
+}
+img { max-width: 100%; display: block; }
+a { color: inherit; }
+button, input, select, textarea { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--weiss); outline-offset: 3px; }
+
+.app { max-width: 480px; margin: 0 auto; padding: 0 16px 24px; padding-top: env(safe-area-inset-top); }
+body.breit .app { max-width: 1100px; }
+.unsichtbar { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+
+.vorschau-band {
+  position: sticky; top: 0; z-index: 25; margin: 0 -16px; padding: 8px 16px;
+  background: var(--rot); color: var(--weiss); font-size: 12px; font-weight: 700; text-align: center;
+}
+
+/* ------------------------------------------------------------ Schritte */
+.schritt { display: none; }
+.schritt.aktiv { display: block; animation: rein .35s var(--weich) both; }
+@keyframes rein { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+.kopf { display: flex; justify-content: center; padding: 20px 0 16px; }
+/* Die Logo-Datei ist quadratisch mit viel leerem Rand. Nur der Ausschnitt wird kleiner, das Logo nie verändert. */
+.logo { width: 180px; height: 96px; object-fit: cover; }
+
+.leiste { display: flex; justify-content: space-between; align-items: center; min-height: 56px; }
+
+/* ------------------------------------------------------------ Typografie */
+.titel-gross {
+  font: 400 clamp(46px, 14.5vw, 76px)/.9 var(--titel);
+  text-transform: uppercase;
+  letter-spacing: .005em;
+  margin: 28px 0 18px;
+}
+.titel-gross .zeile { display: block; animation: hoch .8s var(--weich) both; }
+.titel-gross .zeile + .zeile { animation-delay: .12s; }
+.zeile-akzent::after {
+  content: "";
+  display: block;
+  width: 72px;
+  height: 6px;
+  margin-top: 16px;
+  background: var(--rot);
+  transform-origin: left;
+  animation: strich .6s .55s var(--weich) both;
+}
+@keyframes hoch { from { opacity: 0; transform: translateY(28px); } to { opacity: 1; transform: none; } }
+@keyframes strich { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+.auftritt { animation: hoch .7s var(--weich) both; }
+.lead.auftritt { animation-delay: .3s; }
+.knopf.auftritt { animation-delay: .42s; }
+.klein.auftritt { animation-delay: .5s; }
+
+.titel { font: 400 34px/1 var(--titel); text-transform: uppercase; margin: 8px 0 16px; }
+.lead { font-size: 18px; color: var(--text-2); margin: 0 0 24px; }
+.hinweis { color: var(--text-2); font-size: 14px; margin: 16px 0 0; }
+.hinweis-platzhalter { color: var(--weiss); border-left: 3px solid var(--rot); padding-left: 10px; }
+.klein { font-size: 13px; color: var(--text-2); margin: 14px 0 0; }
+.zentriert { text-align: center; }
+.hilfe { font-size: 13px; color: var(--text-2); text-align: center; margin: 10px 0 6px; }
+
+/* ------------------------------------------------------------ Knöpfe */
+.knopf {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-height: 54px; padding: 14px 20px;
+  border: 1px solid transparent; border-radius: 0;
+  font-weight: 600; font-size: 16px; line-height: 1.2; text-align: center; text-decoration: none;
+  cursor: pointer;
+  transition: transform .12s ease, background-color .2s ease, border-color .2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.knopf:active { transform: scale(.98); }
+.knopf:disabled { opacity: .4; cursor: default; transform: none; }
+.knopf-haupt { background: var(--rot); color: var(--weiss); }
+.knopf-haupt:hover:not(:disabled) { background: #b00000; }
+.knopf-zweit { background: transparent; color: var(--weiss); border-color: var(--grau); }
+.knopf-zweit:hover:not(:disabled) { border-color: var(--weiss); }
+.knopf-breit { display: flex; width: 100%; }
+.knopf-text {
+  background: none; border: 0; padding: 12px 0; cursor: pointer;
+  color: var(--text-2); font-size: 15px; text-decoration: none;
+}
+.knopf-text:hover { color: var(--weiss); }
+.knopf-klein { font-size: 13px; text-decoration: underline; }
+
+.aktionen { display: flex; gap: 10px; margin-top: 10px; }
+.aktionen > .knopf { flex: 1; }
+.aktionen-spalte { display: grid; gap: 10px; margin-top: 18px; }
+
+/* ------------------------------------------------------------ Vorher/Nachher (Start) */
+.vergleich {
+  position: relative; margin: 0; aspect-ratio: 3 / 4;
+  overflow: hidden; border: 1px solid var(--grau); background: var(--flaeche);
+  touch-action: pan-y; user-select: none; -webkit-user-select: none; cursor: ew-resize;
+  --teilung: 50%;
+}
+.vergleich-bild { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+.vergleich-nachher { clip-path: inset(0 0 0 var(--teilung)); }
+.vergleich-linie {
+  position: absolute; top: 0; bottom: 0; left: var(--teilung); width: 2px; margin-left: -1px;
+  background: var(--weiss); pointer-events: none;
+}
+.vergleich-griff {
+  position: absolute; top: 50%; left: 50%; width: 40px; height: 40px; margin: -20px 0 0 -20px;
+  border-radius: 50%; background: var(--rot); border: 2px solid var(--weiss);
+}
+.vergleich-griff::before, .vergleich-griff::after {
+  content: ""; position: absolute; top: 50%; width: 0; height: 0; margin-top: -5px;
+  border: 5px solid transparent;
+}
+.vergleich-griff::before { left: 5px; border-right-color: var(--weiss); }
+.vergleich-griff::after { right: 5px; border-left-color: var(--weiss); }
+.vergleich.faehrt { transition: --teilung 1.4s var(--weich); }
+.vergleich-regler { position: absolute; width: 1px; height: 1px; opacity: 0; bottom: 0; left: 0; }
+.vergleich:focus-within { outline: 2px solid var(--weiss); outline-offset: 3px; }
+
+.chip {
+  position: absolute; padding: 5px 9px; font-size: 11px; font-weight: 700; letter-spacing: .08em;
+  text-transform: uppercase; background: rgba(0, 0, 0, .72); color: var(--weiss); pointer-events: none;
+}
+.chip-oben { top: 12px; left: 12px; border-left: 3px solid var(--rot); }
+.chip-links { bottom: 12px; left: 12px; }
+.chip-rechts { bottom: 12px; right: 12px; }
+
+/* ------------------------------------------------------------ Motive */
+.motiv-raster { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.motiv-kachel {
+  display: flex; flex-direction: column; gap: 2px; padding: 0 0 12px; text-align: left;
+  background: var(--flaeche); border: 1px solid #1f1f1f; cursor: pointer; color: var(--weiss);
+  transition: border-color .2s ease, transform .12s ease;
+}
+.motiv-kachel:hover { border-color: var(--grau); }
+.motiv-kachel:active { transform: scale(.98); }
+.motiv-kachel strong { padding: 10px 12px 0; font-size: 15px; }
+.motiv-kachel > span:not(.motiv-papier):not(.motiv-plus) { padding: 0 12px; font-size: 13px; color: var(--text-2); }
+/* overflow + min-height: sonst drückt ein hohes Motiv die Kachel in die Länge. */
+.motiv-papier { display: block; flex: none; min-height: 0; overflow: hidden; background: var(--weiss); aspect-ratio: 1; padding: 12px; }
+.motiv-papier img { width: 100%; height: 100%; object-fit: contain; }
+.motiv-eigen { border: 1px dashed var(--grau); }
+.motiv-plus { position: relative; display: block; flex: none; aspect-ratio: 1; }
+.motiv-plus::before, .motiv-plus::after {
+  content: ""; position: absolute; top: 50%; left: 50%; width: 48px; height: 5px; margin: -2.5px 0 0 -24px;
+  background: var(--rot);
+}
+.motiv-plus::after { transform: rotate(90deg); }
+
+/* ------------------------------------------------------------ Anprobe */
+.buehne {
+  position: relative; aspect-ratio: 3 / 4; overflow: hidden;
+  background: #111; border: 1px solid var(--grau); touch-action: none;
+}
+.buehne video, .buehne canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.buehne video { object-fit: cover; }
+.buehne canvas { cursor: grab; }
+.buehne canvas:active { cursor: grabbing; }
+.buehne-meldung {
+  position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; gap: 10px;
+  padding: 24px; background: rgba(0, 0, 0, .82); text-align: center;
+}
+.buehne-meldung strong { font: 400 28px/1 var(--titel); text-transform: uppercase; }
+.buehne-meldung p { margin: 0 0 8px; color: var(--text-2); }
+.buehne-laden {
+  position: absolute; inset: 0; display: flex; align-items: flex-end; justify-content: center;
+  background: rgba(0, 0, 0, .35);
+}
+.buehne-laden p {
+  margin: 0 0 18px; padding: 8px 12px; background: rgba(0, 0, 0, .8);
+  font-weight: 600; font-size: 14px;
+}
+.scan {
+  position: absolute; left: 0; right: 0; top: 0; height: 3px;
+  background: var(--rot); box-shadow: 0 0 18px 4px rgba(153, 0, 0, .8);
+  animation: scan 1.8s ease-in-out infinite alternate;
+}
+@keyframes scan { from { top: 4%; } to { top: 94%; } }
+
+.regler { display: grid; gap: 4px; margin: 4px 0 6px; }
+.regler label { display: grid; grid-template-columns: 64px 1fr; align-items: center; gap: 10px; font-size: 13px; color: var(--text-2); }
+input[type="range"] { width: 100%; accent-color: var(--rot); height: 32px; }
+
+/* ------------------------------------------------------------ Formular-Blatt */
+.blatt-hintergrund {
+  position: fixed; inset: 0; z-index: 20; display: flex; align-items: flex-end; justify-content: center;
+  background: rgba(0, 0, 0, .72);
+}
+.blatt {
+  position: relative; width: 100%; max-width: 480px; max-height: 94vh; overflow-y: auto;
+  padding: 22px 16px calc(22px + env(safe-area-inset-bottom));
+  background: var(--flaeche); border-top: 3px solid var(--rot);
+  animation: blatt-hoch .32s var(--weich) both;
+}
+@keyframes blatt-hoch { from { transform: translateY(40px); opacity: 0; } to { transform: none; opacity: 1; } }
+.blatt .titel { font-size: 30px; padding-right: 40px; }
+.blatt-zu {
+  position: absolute; top: 10px; right: 8px; width: 44px; height: 44px;
+  background: none; border: 0; font-size: 30px; line-height: 1; color: var(--text-2); cursor: pointer;
+}
+.formular-kopf { display: flex; gap: 12px; align-items: center; margin: 0 0 16px; }
+.formular-kopf img { width: 72px; height: 96px; object-fit: cover; border: 1px solid var(--grau); flex: none; }
+.formular-kopf p { margin: 0; color: var(--text-2); font-size: 14px; }
+
+.feld { display: grid; gap: 6px; margin: 0 0 14px; }
+.feld > span { font-size: 13px; font-weight: 600; }
+.feld small { font-size: 12px; color: var(--text-2); }
+.feld input, .feld select, .feld textarea {
+  width: 100%; padding: 13px 12px; font-size: 16px;
+  background: var(--schwarz); border: 1px solid var(--grau); border-radius: 0;
+  -webkit-appearance: none; appearance: none;
+}
+.feld select {
+  background-image: linear-gradient(45deg, transparent 50%, #fff 50%), linear-gradient(-45deg, transparent 50%, #fff 50%);
+  background-position: calc(100% - 20px) 55%, calc(100% - 14px) 55%;
+  background-size: 6px 6px; background-repeat: no-repeat; padding-right: 36px;
+}
+.feld input:focus, .feld select:focus, .feld textarea:focus { border-color: var(--weiss); outline: none; }
+.feld.falsch input, .feld.falsch select { border-color: var(--rot); box-shadow: inset 3px 0 0 var(--rot); }
+.feld-paar { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+.haekchen { display: grid; grid-template-columns: 24px 1fr; gap: 10px; align-items: start; margin: 0 0 12px; font-size: 14px; }
+.haekchen input { width: 22px; height: 22px; margin: 1px 0 0; accent-color: var(--rot); }
+.haekchen span { color: var(--text-2); }
+.haekchen.falsch span { color: var(--weiss); }
+
+.formular-fehler, .meldung {
+  margin: 4px 0 14px; padding: 10px 12px; font-size: 14px; font-weight: 600;
+  background: rgba(153, 0, 0, .18); border-left: 3px solid var(--rot);
+}
+
+/* ------------------------------------------------------------ Ergebnis und Anfrage */
+.ergebnis-rahmen { position: relative; border: 1px solid var(--grau); background: var(--flaeche); aspect-ratio: 3 / 4; }
+.ergebnis-rahmen img { width: 100%; height: 100%; object-fit: cover; }
+.umschalter { position: absolute; left: 12px; bottom: 12px; display: flex; background: rgba(0, 0, 0, .78); }
+.umschalter button {
+  padding: 9px 12px; border: 0; background: none; color: var(--text-2);
+  font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; cursor: pointer;
+}
+.umschalter button.aktiv { color: var(--weiss); box-shadow: inset 0 -3px 0 var(--rot); }
+.anfrage-vorschau { width: 96px; height: 128px; object-fit: cover; border: 1px solid var(--grau); margin: 0 0 16px; }
+.titel-danke { margin-top: 48px; }
+
+/* ------------------------------------------------------------ Meldung unten */
+.toast {
+  position: fixed; left: 50%; bottom: calc(18px + env(safe-area-inset-bottom)); z-index: 30;
+  width: min(448px, calc(100% - 32px)); transform: translateX(-50%);
+  padding: 13px 14px; background: #1a1a1a; border-left: 3px solid var(--rot);
+  font-size: 14px; font-weight: 600; box-shadow: 0 8px 30px rgba(0, 0, 0, .6);
+}
+
+/* ------------------------------------------------------------ Fuss, Rechtstext, intern */
+.fuss { display: flex; justify-content: center; gap: 8px; padding: 24px 16px 32px; font-size: 13px; color: var(--text-2); }
+.fuss a { color: var(--text-2); }
+.seite .knopf { margin-top: 8px; }
+.rechtstext h2 { font: 700 17px/1.3 var(--schrift); margin: 28px 0 8px; }
+.rechtstext p, .rechtstext li { color: var(--text-2); font-size: 15px; }
+.rechtstext strong { color: var(--weiss); }
+.rechtstext ul { padding-left: 20px; }
+.entwurf { padding: 10px 12px; border: 1px dashed var(--rot); font-size: 13px; color: var(--weiss); }
+.intern table { width: 100%; border-collapse: collapse; font-size: 14px; margin: 0 0 18px; }
+.intern th, .intern td { padding: 8px 10px; border-bottom: 1px solid #222; text-align: left; white-space: nowrap; }
+.intern td small { color: var(--text-2); }
+.intern h2 { font: 700 18px/1.3 var(--schrift); margin: 28px 0 8px; }
+.tabelle-rollen { overflow-x: auto; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; animation-delay: 0s !important; transition-duration: .01ms !important; }
+}
