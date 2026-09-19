@@ -134,7 +134,10 @@ body.breit .app { max-width: 1100px; }
 }
 .vergleich-griff::before { left: 5px; border-right-color: var(--weiss); }
 .vergleich-griff::after { right: 5px; border-left-color: var(--weiss); }
-.vergleich.faehrt { transition: --teilung 1.4s var(--weich); }
+.vergleich.faehrt { transition: --teilung var(--dauer, 1.4s) var(--weich); }
+.vergleich-text { margin: 10px 0 0; font-size: 13px; color: var(--text-2); text-align: center; }
+.chip-links, .chip-rechts { transition: opacity .25s ease; }
+.chip.weg { opacity: 0; }
 .vergleich-regler { position: absolute; width: 1px; height: 1px; opacity: 0; bottom: 0; left: 0; }
 .vergleich:focus-within { outline: 2px solid var(--weiss); outline-offset: 3px; }
 

@@ -598,32 +598,57 @@
   const vergleich = $('#vergleich');
   if (vergleich) {
     const regler = $('.vergleich-regler', vergleich);
-    const setzen = prozent => {
+    const chipLinks = $('.chip-links', vergleich);
+    const chipRechts = $('.chip-rechts', vergleich);
+    // Die Schilder zeigen nur, was gerade zu sehen ist.
+    const schilder = prozent => {
+      chipLinks.classList.toggle('weg', prozent < 12);
+      chipRechts.classList.toggle('weg', prozent > 88);
+    };
+    const setzen = (prozent, mitSchildern = true) => {
       vergleich.style.setProperty('--teilung', `${klemmen(prozent, 0, 100)}%`);
       regler.value = Math.round(prozent);
+      if (mitSchildern) schilder(prozent);
     };
     let zieht = false;
+    let angefasst = false;
     const ausZeiger = e => {
       const r = vergleich.getBoundingClientRect();
       setzen((e.clientX - r.left) / r.width * 100);
     };
     vergleich.addEventListener('pointerdown', e => {
       zieht = true;
+      angefasst = true;
       vergleich.classList.remove('faehrt');
       vergleich.setPointerCapture(e.pointerId);
       ausZeiger(e);
     });
     vergleich.addEventListener('pointermove', e => { if (zieht) ausZeiger(e); });
     ['pointerup', 'pointercancel'].forEach(art => vergleich.addEventListener(art, () => { zieht = false; }));
-    regler.addEventListener('input', () => setzen(Number(regler.value)));
-    // Einmaliger Auftritt: die Schablone wird von rechts her zum Echt-Bild.
-    if (!reduziert) {
+    regler.addEventListener('input', () => { angefasst = true; setzen(Number(regler.value)); });
+
+    // Einmaliger Auftritt als kleine Geschichte: ganz Schablone, dann ganz Echt-Bild, dann halb-halb.
+    // Wer vorher selbst zieht, übernimmt sofort.
+    const pause = ms => new Promise(fertig => setTimeout(fertig, ms));
+    const fahren = async (ziel, dauer) => {
+      if (angefasst) return;
+      vergleich.style.setProperty('--dauer', `${dauer}ms`);
+      vergleich.classList.add('faehrt');
+      schilder(50);
+      setzen(ziel, false);
+      await pause(dauer + 40);
+      vergleich.classList.remove('faehrt');
+      if (!angefasst) schilder(ziel);
+    };
+    if (reduziert) setzen(50);
+    else {
       setzen(100);
-      requestAnimationFrame(() => requestAnimationFrame(() => {
-        vergleich.classList.add('faehrt');
-        setzen(38);
-        setTimeout(() => vergleich.classList.remove('faehrt'), 1600);
-      }));
+      (async () => {
+        await pause(900);
+        await fahren(0, 1700);
+        await pause(1100);
+        await fahren(50, 900);
+      })();
     }
   }
 
